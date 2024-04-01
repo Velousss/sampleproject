@@ -12,38 +12,38 @@ import (
 )
 
 func main() {
-	dialer, err := net.Dial("tcp","localhost:1234")
+	dialer, err := net.DialTimeout("tcp", "localhost:1234", 5*time.Second)
 	handler.HandleError(err)
 	defer dialer.Close()
 
-	scanner:=bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewScanner(os.Stdin)
 	var msg string
 
-	for{
+	for {
 		fmt.Print("Message: ")
 		scanner.Scan()
 		msg = scanner.Text()
 
 		data := types.Binary(msg)
-		_,err = data.WriteTo(dialer)
+		_, err = data.WriteTo(dialer)
 		handler.HandleError(err)
 
-		payload,err := types.Decode(dialer)
+		payload, err := types.Decode(dialer)
 		handler.HandleError(err)
 
-		err=dialer.SetReadDeadline(time.Now().Add(5*time.Second))
-		if err!=nil{
-			if netErr,ok:=err.(net.Error);ok&&netErr.Timeout(){
+		err = dialer.SetReadDeadline(time.Now().Add(5 * time.Second))
+		if err != nil {
+			if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
 				fmt.Println(err)
-			}else{
+			} else {
 				handler.HandleError(err)
 			}
 		}
-		err=dialer.SetWriteDeadline(time.Now().Add(5*time.Second))
-		if err!=nil{
-			if netErr,ok:=err.(net.Error);ok&&netErr.Timeout(){
+		err = dialer.SetWriteDeadline(time.Now().Add(5 * time.Second))
+		if err != nil {
+			if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
 				fmt.Println(err)
-			}else{
+			} else {
 				handler.HandleError(err)
 			}
 		}

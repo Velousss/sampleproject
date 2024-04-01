@@ -9,25 +9,25 @@ import (
 )
 
 func main() {
-	listener, err := net.Listen("tcp","localhost:9999")
+	listener, err := net.Listen("tcp", "localhost:9999")
 	handler.HandleError(err)
 	defer listener.Close()
-	for{
-		conn,err:=listener.Accept()
+	for {
+		conn, err := listener.Accept()
 		handler.HandleError(err)
 		go handleClient(conn)
 	}
 }
 
-func handleClient(conn net.Conn){
+func handleClient(conn net.Conn) {
 	defer conn.Close()
-	for{
-		payload,err:=types.Decode(conn)
+	for {
+		payload, err := types.Decode(conn)
 		handler.HandleError(err)
-		fmt.Println("Recieved: "+string(payload.Bytes()))
+		fmt.Println("Recieved: " + string(payload.Bytes()))
 
-		data:=types.Binary("Server has recieved: "+string(payload.Bytes()))
-		_,err=data.WriteTo(conn)
+		data := types.Binary("Server has recieved: " + string(payload.Bytes()))
+		_, err = data.WriteTo(conn)
 		handler.HandleError(err)
 	}
 }

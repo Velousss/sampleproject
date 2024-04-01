@@ -3,7 +3,7 @@ package handler
 import "fmt"
 
 func HandleError(e error) {
-	if e!=nil{
+	if e != nil {
 		fmt.Println(e)
 	}
 }
